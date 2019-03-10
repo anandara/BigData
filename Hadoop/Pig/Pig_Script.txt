@@ -1,0 +1,526 @@
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin. And since /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin is not a valid variable name, it fails. 
+
+Interactive Mode:
+------------------	Create a Directory in HDFS
+	===========================
+	$cd /$Hadoop_Home/bin/ 
+	$ hdfs dfs -mkdir hdfs://localhost:9000/Pig_Data
+
+	$ cd $HADOOP_HOME/bin 
+	$ hdfs dfs -put /home/Hadoop/Pig/Pig_Data/student.txt dfs://localhost:9000/pig_data/
+	
+	$ cd $HADOOP_HOME/bin
+	$ hdfs dfs -cat hdfs://localhost:9000/pig_data/student.txt
+	
+	Start the Pig Grunt Shell
+	==========================
+	$ Pig –x mapreduce
+	
+	Load data into a Pig relation without a schema
+	==============================================
+	grunt> departments = LOAD '/user/root/sqoop_import/departments' USING PigStorage(',');
+	grunt> DUMP departments;
+	
+	Load data into a Pig relation with a schema
+	============================================
+	grunt> student = LOAD 'hdfs://localhost:9000/pig_data/student.txt' 
+		   USING PigStorage(',')
+		   as ( id:int, firstname:chararray, lastname:chararray, phone:chararray, 
+		   city:chararray );
+		   
+	grunt> DUMP student;
+
+Executing Apache Pig in Batch Mode:
+------------------------------------
+	You can write an entire Pig Latin script in a file and execute it using the –x command. Let us suppose we have a Pig script in a file named sample_script.pig as shown below.
+
+		student = LOAD 'hdfs://localhost:9000/pig_data/student.txt' USING
+		PigStorage(',') as (sid:int,sname:chararray,city:chararray);
+		Dump student;
+		
+		$ pig -x mapreduce Sample_script.pig
+
+Shell Commands:
+---------------
+	sh Command
+	===========
+		Using sh command, we can invoke any shell commands from the Grunt shell.
+		
+	Example
+	=======
+	grunt> sh ls
+
+	fs Command
+	==========
+		Using the fs command, we can invoke any FsShell commands from the Grunt shell.
+
+		Example
+		=======
+		grunt> fs –ls
+		
+	clear Command
+	==============
+		The clear command is used to clear the screen of the Grunt shell.
+		grunt> clear
+	
+	help Command
+	============
+		The help command gives you a list of Pig commands or Pig properties.
+		grunt> help
+		
+	history Command
+	================
+		This command displays a list of statements executed / used so far since the Grunt sell is invoked.
+		grunt> history
+		
+	set Command
+	===========
+		The set command is used to show/assign values to keys used in Pig.
+		
+	quit Command
+	============
+		You can quit from the Grunt shell using this command.
+		grunt> quit
+		
+	exec Command
+	============
+	Using the exec command, we can execute Pig scripts from the Grunt shell.
+	
+	Example
+	=======
+	Let us assume there is a file named student.txt in the /pig_data/ directory of HDFS with the following content.
+		Student.txt
+		
+		001,Rajiv,Hyderabad
+		002,siddarth,Kolkata
+		003,Rajesh,Delhi
+		
+		Sample_script.pig
+		
+		student = LOAD 'hdfs://localhost:9000/pig_data/student.txt' USING PigStorage(',') as (id:int,name:chararray,city:chararray);  
+		Dump student;
+		
+		grunt> exec /home/venkat/Test.pig
+		
+Pig Latin – Data Model:
+----------------------
+	A bag is a collection of tuples.
+	A tuple is an ordered set of fields.
+	A field is a piece of data.
+	
+	Pig Latin – Statemets:
+	======================
+	grunt> Student_data = LOAD 'student.txt' USING PigStorage(',')as ( id:int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray );
+	
+	
+Apache Pig - Reading Data
+--------------------------
+	Preparing HDFS
+	===============
+	001,Rajiv,Reddy,9848022337,Hyderabad
+	002,siddarth,Battacharya,9848022338,Kolkata
+	003,Rajesh,Khanna,9848022339,Delhi
+	004,Preethi,Agarwal,9848022330,Pune
+	005,Trupthi,Mohanthy,9848022336,Bhuwaneshwar
+	006,Archana,Mishra,9848022335,Chennai.
+	
+	Create a Directory in HDFS
+	===========================
+	$cd /$Hadoop_Home/bin/ 
+	$ hdfs dfs -mkdir hdfs://localhost:9000/Pig_Data
+
+	$ cd $HADOOP_HOME/bin 
+	$ hdfs dfs -put /home/Hadoop/Pig/Pig_Data/student.txt dfs://localhost:9000/pig_data/
+	
+	$ cd $HADOOP_HOME/bin
+	$ hdfs dfs -cat hdfs://localhost:9000/pig_data/student.txt
+	
+	Start the Pig Grunt Shell
+	==========================
+	$ Pig –x mapreduce
+	
+	Execute the Load Statement
+	===========================
+	grunt> student = LOAD 'hdfs://localhost:9000/pig_data/student.txt' 
+		   USING PigStorage(',')
+		   as ( id:int, firstname:chararray, lastname:chararray, phone:chararray, 
+		   city:chararray );
+		   
+Apache Pig - Storing Data
+--------------------------
+	Example
+	=======
+	001,Rajiv,Reddy,9848022337,Hyderabad
+	002,siddarth,Battacharya,9848022338,Kolkata
+	003,Rajesh,Khanna,9848022339,Delhi
+	004,Preethi,Agarwal,9848022330,Pune
+	005,Trupthi,Mohanthy,9848022336,Bhuwaneshwar
+	006,Archana,Mishra,9848022335,Chennai.
+	
+	grunt> student = LOAD 'hdfs://localhost:9000/pig_data/student.txt' 
+		   USING PigStorage(',')
+		   as ( id:int, firstname:chararray, lastname:chararray, phone:chararray, 
+		   city:chararray );
+		   
+	grunt> STORE student INTO ' hdfs://localhost:9000/pig_Output/ ' USING PigStorage (',');
+	
+	Verification
+	=============
+	hdfs dfs -ls 'hdfs://localhost:9000/pig_Output/'
+	
+Apache Pig - Diagnostic Operators
+----------------------------------
+The load statement will simply load the data into the specified relation in Apache Pig. To verify the execution of the Load statement, you have to use the Diagnostic Operators. Pig Latin provides four different types of diagnostic operators -
+
+	Dump operator
+	Describe operator
+	Explanation operator
+	Illustration operator
+	
+	Dump Operator
+	=============
+	The Dump operator is used to run the Pig Latin statements and display the results on the screen. It is generally used for debugging Purpose.
+	
+	grunt> Dump student
+	
+	Describe Operator
+	==================
+	The describe operator is used to view the schema of a relation.
+	
+	grunt> describe student;
+	
+	Explain Operator
+	=================
+	The explain operator is used to display the logical, physical, and MapReduce execution plans of a relation.
+	
+	grunt> explain student;
+	
+	Illustrate Operator
+	====================
+	The illustrate operator gives you the step-by-step execution of a sequence of statements.
+	
+	grunt> illustrate student;
+	
+	Group Operator
+	===============
+	The GROUP operator is used to group the data in one or more relations. It collects the data having the same key.
+	
+	grunt> student_details = LOAD 'hdfs://localhost:9000/pig_data/student_details.txt' USING PigStorage(',')
+			as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+			
+	grunt> group_data = GROUP student_details by age;
+	
+	grunt> Dump group_data;
+	
+	Grouping by Multiple Columns
+	=============================
+	grunt> group_multiple = GROUP student_details by (age, city);
+	
+	Group All
+	==========
+	grunt> group_all = GROUP student_details All;
+	
+	Cogroup Operator
+	================
+	
+	student_details.txt
+		001,Rajiv,Reddy,21,9848022337,Hyderabad
+		002,siddarth,Battacharya,22,9848022338,Kolkata
+		003,Rajesh,Khanna,22,9848022339,Delhi
+		004,Preethi,Agarwal,21,9848022330,Pune
+		005,Trupthi,Mohanthy,23,9848022336,Bhuwaneshwar
+		006,Archana,Mishra,23,9848022335,Chennai
+		007,Komal,Nayak,24,9848022334,trivendram
+		008,Bharathi,Nambiayar,24,9848022333,Chennai
+		
+	employee_details.txt
+		001,Robin,22,newyork 
+		002,BOB,23,Kolkata 
+		003,Maya,23,Tokyo 
+		004,Sara,25,London 
+		005,David,23,Bhuwaneshwar 
+		006,Maggy,22,Chennai
+		
+	grunt> student_details = LOAD 'hdfs://localhost:9000/pig_data/student_details.txt' USING PigStorage(',')
+			as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray); 
+  
+	grunt> employee_details = LOAD 'hdfs://localhost:9000/pig_data/employee_details.txt' USING PigStorage(',')
+			as (id:int, name:chararray, age:int, city:chararray);
+			
+	grunt> cogroup_data = COGROUP student_details by age, employee_details by age;
+	
+	grunt> Dump cogroup_data;
+	
+Apache Pig - Join Operator
+---------------------------
+
+	The JOIN operator is used to combine records from two or more relations.
+
+	Self-join
+	Inner-join
+	Outer-join - left join, right join, and full join
+	
+	customers.txt
+		1,Ramesh,32,Ahmedabad,2000.00
+		2,Khilan,25,Delhi,1500.00
+		3,kaushik,23,Kota,2000.00
+		4,Chaitali,25,Mumbai,6500.00 
+		5,Hardik,27,Bhopal,8500.00
+		6,Komal,22,MP,4500.00
+		7,Muffy,24,Indore,10000.00
+		
+	orders.txt	
+		102,2009-10-08 00:00:00,3,3000
+	AA			100,2009-10-08 00:00:00,3,1500
+		101,2009-11-20 00:00:00,2,1560
+		103,2008-05-20 00:00:00,4,2060
+		
+	grunt> customers = LOAD 'hdfs://localhost:9000/pig_data/customers.txt' USING PigStorage(',')
+			as (id:int, name:chararray, age:int, address:chararray, salary:int);
+  
+	grunt> orders = LOAD 'hdfs://localhost:9000/pig_data/orders.txt' USING PigStorage(',')
+			as (oid:int, date:chararray, customer_id:int, amount:int);
+			
+	inner join
+	===========
+	grunt> coustomer_orders = JOIN customers BY id, orders BY customer_id;
+	
+	Left Outer Join
+	================	
+	grunt> outer_left = JOIN customers BY id LEFT OUTER, orders BY customer_id;
+	
+	Right Outer Join
+	=================
+	grunt> outer_right = JOIN customers BY id RIGHT, orders BY customer_id;
+	
+	Full Outer Join
+	================
+	grunt> outer_full = JOIN customers BY id FULL OUTER, orders BY customer_id;
+	
+	Using Multiple Keys
+	===================
+	
+	employee.txt
+		001,Rajiv,Reddy,21,programmer,003
+		002,siddarth,Battacharya,22,programmer,003
+		003,Rajesh,Khanna,22,programmer,003
+		004,Preethi,Agarwal,21,programmer,003
+		005,Trupthi,Mohanthy,23,programmer,003
+		006,Archana,Mishra,23,programmer,003
+		007,Komal,Nayak,24,teamlead,002
+		008,Bharathi,Nambiayar,24,manager,001
+		
+	employee_contact.txt
+		001,9848022337,Rajiv@gmail.com,Hyderabad,003
+		002,9848022338,siddarth@gmail.com,Kolkata,003
+		003,9848022339,Rajesh@gmail.com,Delhi,003
+		004,9848022330,Preethi@gmail.com,Pune,003
+		005,9848022336,Trupthi@gmail.com,Bhuwaneshwar,003
+		006,9848022335,Archana@gmail.com,Chennai,003
+		007,9848022334,Komal@gmail.com,trivendram,002
+		008,9848022333,Bharathi@gmail.com,Chennai,001
+		
+	grunt> employee = LOAD 'hdfs://localhost:9000/pig_data/employee.txt' USING PigStorage(',')
+			as (id:int, firstname:chararray, lastname:chararray, age:int, designation:chararray, jobid:int);
+  
+	grunt> employee_contact = LOAD 'hdfs://localhost:9000/pig_data/employee_contact.txt' USING PigStorage(',') 
+			as (id:int, phone:chararray, email:chararray, city:chararray, jobid:int);
+			
+	grunt> emp = JOIN employee BY (id,jobid), employee_contact BY (id,jobid);
+	
+	grunt> Dump emp; 
+	
+Apache Pig - Cross Operator
+-----------------------------
+	Example
+	========
+		customers.txt
+		=============
+		1,Ramesh,32,Ahmedabad,2000.00
+		2,Khilan,25,Delhi,1500.00
+		3,kaushik,23,Kota,2000.00
+		4,Chaitali,25,Mumbai,6500.00
+		5,Hardik,27,Bhopal,8500.00
+		6,Komal,22,MP,4500.00
+		7,Muffy,24,Indore,10000.00
+		
+		orders.txt
+		===========
+		102,2009-10-08 00:00:00,3,3000
+		100,2009-10-08 00:00:00,3,1500
+		101,2009-11-20 00:00:00,2,1560
+		103,2008-05-20 00:00:00,4,2060
+		
+	grunt> customers = LOAD 'hdfs://localhost:9000/pig_data/customers.txt' USING PigStorage(',')
+			as (id:int, name:chararray, age:int, address:chararray, salary:int);
+  
+	grunt> orders = LOAD 'hdfs://localhost:9000/pig_data/orders.txt' USING PigStorage(',')
+			as (oid:int, date:chararray, customer_id:int, amount:int);
+			
+	grunt> cross_data = CROSS customers, orders;
+	
+	grunt> Dump cross_data;
+	
+	
+Apache Pig - Union Operator
+----------------------------
+	Example
+	========
+		Student_data1.txt
+		==================
+		001,Rajiv,Reddy,9848022337,Hyderabad
+		002,siddarth,Battacharya,9848022338,Kolkata
+		003,Rajesh,Khanna,9848022339,Delhi
+		004,Preethi,Agarwal,9848022330,Pune
+		005,Trupthi,Mohanthy,9848022336,Bhuwaneshwar
+		006,Archana,Mishra,9848022335,Chennai.
+		
+		Student_data2.txt
+			=================
+		7,Komal,Nayak,9848022334,trivendram.
+		8,Bharathi,Nambiayar,9848022333,Chennai.
+		
+	grunt> student1 = LOAD 'hdfs://localhost:9000/pig_data/student_data1.txt' USING PigStorage(',') 
+			as (id:int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray); 
+ 
+	grunt> student2 = LOAD 'hdfs://localhost:9000/pig_data/student_data2.txt' USING PigStorage(',') 
+			as (id:int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray);
+			
+	grunt> student = UNION student1, student2;
+	
+	grunt> Dump student;
+
+Apache Pig - Split Operator
+----------------------------
+	Example
+	=======
+		student_details.txt
+		===================
+		001,Rajiv,Reddy,21,9848022337,Hyderabad
+		002,siddarth,Battacharya,22,9848022338,Kolkata
+			003,Rajesh,Khanna,22,9848022339,Delhi 
+		004,Preethi,Agarwal,21,9848022330,Pune 
+		005,Trupthi,Mohanthy,23,9848022336,Bhuwaneshwar 
+		006,Archana,Mishra,23,9848022335,Chennai 
+		007,Komal,Nayak,24,9848022334,trivendram 
+		008,Bharathi,Nambiayar,24,9848022333,Chennai
+		
+	grunt> student_details = LOAD 'hdfs://localhost:9000/pig_data/student_details.txt' USING PigStorage(',')
+			as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+			
+	grunt> SPLIT student_details into student_details1 if age<23, student_details2 if (22<age and age>25);
+	
+	grunt> Dump student_details1;  
+
+	grunt> Dump student_details2;
+
+Apache Pig - Filter Operator
+-----------------------------
+	Example
+	=======
+		student_details.txt
+		===================
+		001,Rajiv,Reddy,21,9848022337,Hyderabad
+		002,siddarth,Battacharya,22,9848022338,Kolkata
+		003,Rajesh,Khanna,22,9848022339,Delhi 
+		004,Preethi,Agarwal,21,9848022330,Pune 
+		005,Trupthi,Mohanthy,23,9848022336,Bhuwaneshwar 
+		006,Archana,Mishra,23,9848022335,Chennai 
+		007,Komal,Nayak,24,9848022334,trivendram 
+		008,Bharathi,Nambiayar,24,9848022333,Chennai
+		
+	grunt> student_details = LOAD 'hdfs://localhost:9000/pig_data/student_details.txt' USING PigStorage(',')
+			as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+			
+	grunt> filter_data = FILTER student_details BY city == 'Chennai';
+	
+	grunt> Dump filter_data;
+	
+Apache Pig - Distinct Operator
+-------------------------------
+	Example
+	=======
+		student_details.txt
+		====================
+		001,Rajiv,Reddy,9848022337,Hyderabad
+		002,siddarth,Battacharya,9848022338,Kolkata 
+		002,siddarth,Battacharya,9848022338,Kolkata 
+		003,Rajesh,Khanna,9848022339,Delhi 
+		003,Rajesh,Khanna,9848022339,Delhi 
+		004,Preethi,Agarwal,9848022330,Pune 
+		005,Trupthi,Mohanthy,9848022336,Bhuwaneshwar
+		006,Archana,Mishra,9848022335,Chennai 
+		006,Archana,Mishra,9848022335,Chennai
+		
+	grunt> student_details = LOAD 'hdfs://localhost:9000/pig_data/student_details.txt' USING PigStorage(',') 
+			as (id:int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray);
+			
+	grunt> distinct_data = DISTINCT student_details
+	
+	grunt> Dump distinct_data;
+	
+Apache Pig - Foreach Operator
+------------------------------
+	Example
+	========
+		student_details.txt
+		====================
+		001,Rajiv,Reddy,21,9848022337,Hyderabad
+		002,siddarth,Battacharya,22,9848022338,Kolkata
+		003,Rajesh,Khanna,22,9848022339,Delhi 
+		004,Preethi,Agarwal,21,9848022330,Pune 
+		005,Trupthi,Mohanthy,23,9848022336,Bhuwaneshwar 
+		006,Archana,Mishra,23,9848022335,Chennai 
+		007,Komal,Nayak,24,9848022334,trivendram 
+		008,Bharathi,Nambiayar,24,9848022333,Chennai
+		
+	grunt> student_details = LOAD 'hdfs://localhost:9000/pig_data/student_details.txt' USING PigStorage(',')
+			as (id:int, firstname:chararray, lastname:chararray,age:int, phone:chararray, city:chararray);
+			
+	grunt> foreach_data = FOREACH student_details GENERATE id,age,city;
+	
+	grunt> Dump foreach_data;
+	
+Apache Pig - Order By
+=====================
+	grunt> order_by_data = ORDER student_details BY age DESC;
+	grunt> Dump order_by_data; 
+	
+	
+Apache Pig - Limit Operator
+===========================
+	grunt> limit_data = LIMIT student_details 4; 
+	grunt> Dump limit_data; 
+	
+Word count program
+======================
+	lines = LOAD '/user/root/pig_demo.txt' AS (line:chararray);
+	words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) as word;
+	grouped = GROUP words BY word;
+	wordcount = FOREACH grouped GENERATE group, COUNT(words);
+	DUMP wordcount;
+		
+		
+Load data from a Hive table into a Pig relation
+================================================
+	-- Launch grunt using "pig -useHCatalog"
+	customer_details = LOAD 'xademo.customer_details' USING org.apache.hive.hcatalog.pig.HCatLoader();
+	DESCRIBE customer_details;
+	customer_details_phone_number = FOREACH customer_details GENERATE phone_number;
+	DUMP customer_details_phone_number;
+	
+Use Pig to remove records with null values from a relation
+===========================================================
+	customer_details_wo_schema = LOAD '/apps/hive/warehouse/xademo.db/customer_details' USING PigStorage('|');
+	customer_details_not_null = FILTER customer_details_wo_schema BY ($5 is not null);
+	DUMP customer_details_not_null;
+	
+GROUP ALL (select count(*) from xademo.customer_details)
+=============================================================
+	customer_details = LOAD 'xademo.customer_details' USING org.apache.hive.hcatalog.pig.HCatLoader();
+	customer_details_grouped = GROUP customer_details ALL;
+	customer_details_count = FOREACH customer_details_grouped GENERATE COUNT_STAR(customer_details) AS cnt;
+	DUMP customer_details_count;
+	
+
+How to connect Hive

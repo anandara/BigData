@@ -1,0 +1,235 @@
+Apache Sqoop
+==============
+1) Import
+2) Import-all-tables
+3) export
+4) eval
+5) options-file
+6) list-tables
+7) list-database
+
+Help Command: sqoop help import
+-------------------------------
+
+1)Import
+==============
+	Table-Import:
+	-------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee
+	
+	Target Directory:
+	-----------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--target-dir /dinesh/sqoop/employee1
+	
+	Control Map:
+	-----------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--target-dir /dinesh/sqoop/employee2 \
+	--m 1
+	
+	Where Clause:
+	-------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--where "Emp_id between 2 and 4" \
+	--target-dir /dinesh/sqoop/employee3 \
+	--m 1
+	
+	Ware House Directory:
+	--------------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--where "Emp_id between 2 and 4" \
+	--warehouse-dir /dinesh/sqoop \
+	--m 1
+	
+	Incremental Import:
+	------------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--where "Emp_id between 2 and 4" \
+	--warehouse-dir /dinesh/sqoop \
+	--m 1 \
+	--incremental append \
+	--check-column emp_id \	
+	--last-value 9
+	
+	options-file:
+	-------------
+	
+	1) Create "import.txt" file and add below code
+		import
+		--connect
+		jdbc:mysql://localhost:3306/userdb
+		--username
+		root
+		--password
+		root
+		
+	2) sqoop --options-file Import.txt \
+		--table employee
+		--m 1
+	File Format
+	-----------
+	--Default --Text file
+		sqoop import \
+		  --connect "jdbc:mysql://sandbox.hortonworks.com:3306/retail_db" \
+		  --username=retail_dba \
+		  --password=hadoop \
+		  --table departments \
+		  --as-textfile \
+		  --target-dir=/user/root/departments
+	
+	--Sequencefile -Binary format
+		sqoop import \
+		  --connect "jdbc:mysql://sandbox.hortonworks.com:3306/retail_db" \
+		  --username=retail_dba \
+		  --password=hadoop \
+		  --table departments \
+		  --as-sequencefile \
+		  --target-dir=/user/root/departments
+	
+	--Avrodatafile - Json format
+		sqoop import \
+		  --connect "jdbc:mysql://sandbox.hortonworks.com:3306/retail_db" \
+		  --username=retail_dba \
+		  --password=hadoop \
+		  --table departments \
+		  --as-avrodatafile \
+		  --target-dir=/user/root/departments
+
+
+2) Import All Tables:
+=====================
+	$ sqoop import-all-tables \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root
+	
+3) Import Data into Hive
+========================
+	1) Create-Hive-table
+		Create Hive table using Sqoop from Mysql(RDBMS) schema.
+			$ sqoop create-hive-table \
+			--connect jdbc:mysql://localhost/userdb \
+			--username root \
+			--password root \
+			--table employee \
+			--hive-table employee \
+			--mysql-delimiters
+		
+		
+		Load data into hive table from HDFS.			
+			$ load data inpath '/dinesh/hadoop/employee/part-m-0000'
+		
+	2) hive-import
+	
+		1) Create "import.txt" file and add below code
+		import
+		--connect
+		jdbc:mysql://localhost:3306/userdb
+		--username
+		root
+		--password
+		root
+		
+		2) sqoop --options-file Import.txt \
+		--table employee \
+ 		--hive-table employee \
+		--hive-import
+		
+		
+4) Sqoop Export Data From HDFS to Mysql(RDBMS)
+==============================================
+	a) Inserting data into a table.
+		$ Sqoop export \
+		--connect jdbc:mysql://localhost/userdb \
+		--username root \
+		--password root \
+		--table employee \
+		--m 1 \
+		--export-dir '/dinesh/hadoop/hive/employee.txt'
+		
+	b) updating data to a table.
+		$ Sqoop export \
+		--connect jdbc:mysql://localhost/userdb \
+		--username root \
+		--password root \
+		--table employee \
+		--m 1 \
+		--export-dir '/dinesh/hadoop/hive/employee.txt' \
+		--update-key stu_id \   #Should be primary key or Unique key
+		--update-mode allowinsert  #updateonly (Only update) and allowinsert (Insert and update)
+		
+5) Sqoop - Eval
+================
+	1) Select Query Evaluation
+		$ sqoop eval \
+		--connect jdbc:mysql://localhost/db \
+		--username root \ 
+		--query “SELECT * FROM employee LIMIT 3”
+		
+	2) Insert Query Evaluation
+		$ sqoop eval \
+		--connect jdbc:mysql://localhost/db \
+		--username root \ 
+		-e “INSERT INTO employee VALUES(1207,‘Raju’,‘UI dev’,15000,‘TP’)”
+		
+6) Sqoop - List Database
+=========================
+	$ sqoop list-databases \
+	--connect jdbc:mysql://localhost/ \
+	--username root
+	
+7)Sqoop - List Tables
+======================
+	$ sqoop list-tables \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root
+	
+8) Sqoop Import Change Delimiters
+==================================
+	1) Enclosed-by
+	---------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--target-dir /dinesh/sqoop/employee1_Enclosedby \
+	--enclosed-by \"
+	
+	2) fields terminated by and Lines terminated by
+	------------------------------------------------
+	$ sqoop import \
+	--connect jdbc:mysql://localhost/userdb \
+	--username root \
+	--password root \
+	--table employee \
+	--target-dir /dinesh/sqoop/employee1_Enclosedby \
+	--enclosed-by \" \
+	--fields-terminated-by \| \
+	--lines-terminated-by \: 
+	

@@ -1,0 +1,30 @@
+
+# The configuration file needs to define the sources,
+# the channels and the sinks.
+# Sources, channels and sinks are defined per agent,
+# in this case called 'TwitterAgent'
+
+TwitterAgent.sources = Twitter
+TwitterAgent.channels = MemChannel
+TwitterAgent.sinks = HDFS
+
+TwitterAgent.sources.Twitter.type = org.apache.flume.source.twitter.TwitterSource
+TwitterAgent.sources.Twitter.channels = MemChannel
+TwitterAgent.sources.Twitter.consumerKey = SOnDZk6yp7MVsU3AnAl6x121M
+TwitterAgent.sources.Twitter.consumerSecret = ERRYvoYBb8b8bLidicTlsJBjnZBsyULwdB89qUQCPbFysAKSOt
+TwitterAgent.sources.Twitter.accessToken = 230710378-JMp2zBGgOewayrAfSMS5MXJaGD6dMXegLN4pl54o
+TwitterAgent.sources.Twitter.accessTokenSecret = i4Vb5PuNekGN77r9iYG4JJqYQH793rFBpELut4c8d2uTq
+TwitterAgent.sources.Twitter.keywords = president,election
+
+TwitterAgent.sinks.HDFS.channel = MemChannel
+TwitterAgent.sinks.HDFS.type = hdfs
+TwitterAgent.sinks.HDFS.hdfs.path = /twitterflume
+TwitterAgent.sinks.HDFS.hdfs.fileType = DataStream
+TwitterAgent.sinks.HDFS.hdfs.writeFormat = Text
+TwitterAgent.sinks.HDFS.hdfs.batchSize = 1000
+TwitterAgent.sinks.HDFS.hdfs.rollSize = 0
+TwitterAgent.sinks.HDFS.hdfs.rollCount = 10000
+
+TwitterAgent.channels.MemChannel.type = memory
+TwitterAgent.channels.MemChannel.capacity = 10000
+TwitterAgent.channels.MemChannel.transactionCapacity = 100

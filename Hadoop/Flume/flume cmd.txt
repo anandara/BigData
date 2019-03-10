@@ -1,0 +1,20 @@
+flume-ng agent --name a1 --conf conf --conf-file netcat.conf -Dflume.root.logger=INFO,console
+
+
+$ flume-ng agent --name a1 --conf conf --conf-file flume/netcat.conf -Dflume.root.logger=INFO,console
+
+new terminal 
+$ telnet localhost 44444
+
+
+From Twitter
+1.copy snapshot into lib
+2.change JAVA PATH in env file
+	export JAVA_HOME=/home/osboxes/jdk1.8.0_131
+3.change CLASS path into env file
+	FLUME_CLASSPATH="/home/osboxes/apache-flume-1.6.0-bin/lib/flume-sources-1.0-SNAPSHOT.jar"
+4.Create a dir in HDFS
+		~$ flume-ng agent -n TwitterAgent -c conf -f flume-sources/twitter_file.conf
+		~$ hdfs dfs -cat /twitterflume/FlumeData*
+
+
